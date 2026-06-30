@@ -98,7 +98,7 @@ page_head('Side Quests', '<style>
           <span style="font-size:1.4rem">&#9989;</span>
           <?php else: ?>
           <form method="POST"><input type="hidden" name="quest_id" value="<?= (int) $q['id'] ?>"><button class="btn btn-primary btn-sm">Accept</button></form>
-          <a class="btn btn-ghost btn-sm" href="side-quests.php">Skip</a>
+          <a class="btn btn-ghost btn-sm" href="sidequest.php">Skip</a>
           <?php endif; ?>
         </div>
       </div>

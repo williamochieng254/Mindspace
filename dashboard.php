@@ -4,6 +4,10 @@ require_auth();
 
 $pdo = db();
 $user = current_user_row();
+if (!$user || !isset($user['id'])) {
+  unset($_SESSION['user']);
+  redirect_to('login.php');
+}
 $userId = (int) $user['id'];
 $hour = (int) date('G');
 $greeting = $hour < 12 ? 'Good morning,' : ($hour < 18 ? 'Good afternoon,' : 'Good evening,');
@@ -23,7 +27,7 @@ $stmt = $pdo->prepare('
 $stmt->execute([$userId]);
 $todayQuests = $stmt->fetchAll();
 
-$xp = (int) $user['total_xp'];
+$xp = (int) ($user['total_xp'] ?? 0);
 $level = level_info($xp);
 
 page_head('Home', '<style>
@@ -62,7 +66,7 @@ page_head('Home', '<style>
       <div class="greeting-name"><?= e($user['name']) ?></div>
     </div>
 
-    <form class="mood-check-card" method="POST" action="mood-tracker.php">
+    <form class="mood-check-card" method="POST" action="moodtrack.php">
       <div class="mood-check-title">How are you feeling?</div>
       <div class="mini-mood-row">
         <?php foreach ([1,2,3,4,5] as $m): [$label, $emoji] = mood_label($m); ?>
@@ -74,7 +78,7 @@ page_head('Home', '<style>
     </form>
 
     <div class="section">
-      <div class="section-header"><h2>Today's quests</h2><a href="side-quests.php">See all &#8594;</a></div>
+      <div class="section-header"><h2>Today's quests</h2><a href="sidequest.php">See all &#8594;</a></div>
       <?php if (!$todayQuests): ?>
       <div class="text-sm text-muted text-center" style="padding:20px 0">All quests done today!</div>
       <?php else: foreach ($todayQuests as $q): ?>
@@ -84,7 +88,7 @@ page_head('Home', '<style>
           <div class="tq-title"><?= e($q['title']) ?></div>
           <div class="tq-meta">+<?= (int) $q['xp'] ?> pts - <?= e($q['difficulty']) ?></div>
         </div>
-        <a href="side-quests.php" class="btn btn-soft btn-sm">Start</a>
+        <a href="sidequest.php" class="btn btn-soft btn-sm">Start</a>
       </div>
       <?php endforeach; endif; ?>
     </div>

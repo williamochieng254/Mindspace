@@ -9,3 +9,6 @@ const DB_NAME = 'mindspace';
 const DB_USER = 'root';
 const DB_PASS = 'swae';
 
+// Set to '/mindspace' when app is served from a subfolder, or '' for web root.
+const APP_BASE_PATH = '';
+

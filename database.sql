@@ -44,6 +44,16 @@ CREATE TABLE IF NOT EXISTS expressions (
     CONSTRAINT fk_expressions_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
+CREATE TABLE IF NOT EXISTS mood_entries (
+    id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    user_id INT UNSIGNED NOT NULL,
+    mood TINYINT NOT NULL COMMENT '1=Awful, 2=Meh, 3=Okay, 4=Good, 5=Great',
+    notes TEXT NULL,
+    logged_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_mood_entries_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    INDEX idx_mood_user_logged (user_id, logged_at)
+) ENGINE=InnoDB;
+
 CREATE TABLE IF NOT EXISTS resources (
     id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     title VARCHAR(160) NOT NULL,

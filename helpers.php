@@ -46,9 +46,9 @@ function page_foot(bool $appJs = false): void {
 function bottom_nav(string $active): void {
     $items = [
         'dashboard.php' => ['Home', '&#127968;', 'home'],
-        'side-quests.php' => ['Quests', '&#9876;', 'quests'],
-        'mood-tracker.php' => ['Mood', '&#128202;', 'mood'],
-        'expression.php' => ['Talk', '&#9997;', 'talk'],
+        'sidequest.php' => ['Quests', '&#9876;', 'quests'],
+        'moodtrack.php' => ['Mood', '&#128202;', 'mood'],
+        'express.php' => ['Talk', '&#9997;', 'talk'],
         'resources.php' => ['Resources', '&#128218;', 'resources'],
     ];
 

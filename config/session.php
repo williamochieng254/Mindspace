@@ -3,15 +3,23 @@
  * Session bootstrap â€” call at the top of every PHP page.
  */
 
+require_once __DIR__ . '/config.php';
+
 if (session_status() === PHP_SESSION_NONE) {
     session_set_cookie_params([
         'lifetime' => 0,
         'path'     => '/',
-        'secure'   => isset($_SERVER['HTTPS']),
+        'secure'   => (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off'),
         'httponly' => true,
         'samesite' => 'Lax',
     ]);
     session_start();
+}
+
+function app_url(string $path): string {
+    $base = rtrim(APP_BASE_PATH, '/');
+    $target = '/' . ltrim($path, '/');
+    return ($base === '' ? '' : $base) . $target;
 }
 
 function auth_user(): ?array {
@@ -24,7 +32,7 @@ function require_auth(): void {
             http_response_code(401);
             die(json_encode(['success' => false, 'error' => 'Not authenticated.']));
         }
-        header('Location: /mindspace/login.php');
+        header('Location: ' . app_url('login.php'));
         exit;
     }
 }
@@ -36,7 +44,7 @@ function require_admin(): void {
             http_response_code(403);
             die(json_encode(['success' => false, 'error' => 'Forbidden.']));
         }
-        header('Location: /mindspace/dashboard.php');
+        header('Location: ' . app_url('dashboard.php'));
         exit;
     }
 }

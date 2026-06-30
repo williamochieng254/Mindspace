@@ -4,6 +4,10 @@ require_auth();
 
 $pdo = db();
 $user = current_user_row();
+if (!$user || !isset($user['id'])) {
+  unset($_SESSION['user']);
+  redirect_to('login.php');
+}
 $userId = (int) $user['id'];
 $notice = '';
 
@@ -11,11 +15,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $mood = (int) ($_POST['mood'] ?? 0);
     $notes = trim($_POST['notes'] ?? '');
     if ($mood >= 1 && $mood <= 5) {
+      try {
         $stmt = $pdo->prepare('INSERT INTO mood_entries (user_id, mood, notes) VALUES (?, ?, ?)');
         $stmt->execute([$userId, $mood, $notes ?: null]);
         $pdo->prepare('UPDATE users SET streak = streak + IF(last_active IS NULL OR last_active < CURDATE(), 1, 0), last_active = CURDATE() WHERE id = ?')->execute([$userId]);
         $notice = 'Entry saved! Well done for checking in.';
-        $user = current_user_row();
+        $user = current_user_row() ?: $user;
+      } catch (Throwable $e) {
+        $notice = 'Could not save mood entry right now. Please try again.';
+      }
     }
 }
 
